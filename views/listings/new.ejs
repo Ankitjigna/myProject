@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>duniya</title>
+</head>
+<body>
+    <h3>create your new listing</h3>
+    <form method="post" action="/listings">
+        <input name="listing[title]" placeholder="enter ur title" type="text"><br>
+        <textarea name="listing[description]">write your description here...</textarea><br>
+        <input name="listing[image]" placeholder="enter your image link/url" type="text"><br>
+        <input name="listing[price]" placeholder="price!" type="number"><br>
+        <input name="listing[location]" placeholder="Your location!" type="text"><br>
+        <input name="listing[country]" placeholder="country name" type="text"><br>
+        <button>add</button>
+    </form>
+</body>
+</html>
