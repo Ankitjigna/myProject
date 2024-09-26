@@ -5,6 +5,8 @@ const listing = require("./models/listing.js")
 const path = require("path");
 const methodOverride = require('method-override')
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
@@ -28,9 +30,66 @@ main()
 });
 
 
-app.listen("8080",()=>{
-    console.log("app is listening to port : 8080");
+
+
+app.get("/",(req,res)=>{
+    res.send("home");
+})
+//showing title
+
+app.get("/listings", wrapAsync(async (req,res)=>{
+    const allListing = await listing.find({});
+    res.render("listings/index.ejs",{allListing});
+}));
+
+
+//new route
+
+app.get("/listings/new",(req,res)=>{
+    res.render("listings/new.ejs")
 });
+
+//showing details
+
+app.get("/listings/:id",wrapAsync(async (req,res,next)=>{
+    let { id } = req.params;
+    const Listing = await listing.findById(id);
+    res.render("listings/show.ejs",{Listing});
+}));
+
+//create route
+ app.post("/listings",wrapAsync(async (req,res,next)=>{
+    if(!req.body.listing){
+        throw new ExpressError(400, "send valid data for listing");
+    }
+    const newListing =new listing(req.body.listing);
+    await newListing.save();
+    res.redirect("/listings");
+ }));
+
+
+ // edit
+app.get("/listings/:id/edit",wrapAsync(async (req,res ,next)=>{
+    let { id } = req.params;
+    const Listing = await listing.findById(id);
+    res.render("listings/edit.ejs",{Listing});
+}));
+
+//update
+app.put("/listings/:id",wrapAsync(async (req,res ,next)=>{
+    let { id } = req.params;
+    await listing.findByIdAndUpdate(id,{...req.body.listing});
+    res.redirect("/listings");
+}));
+
+//delete
+app.delete("/listings/:id",wrapAsync(async (req,res,next)=>{
+    let { id } = req.params;
+    await listing.findByIdAndDelete(id);
+    res.redirect("/listings");
+}));
+
+
 
 // app.get("/testlisting",async (req,res)=>{
 //     let sample = new listing({
@@ -45,56 +104,17 @@ app.listen("8080",()=>{
 //     res.send("testing success");
 // });
 
-app.get("/",(req,res)=>{
-    res.send("home");
-})
-//showing title
-
-app.get("/listings", async (req,res)=>{
-    const allListing = await listing.find({});
-    res.render("listings/index.ejs",{allListing});
+app.all("*",(req,res,next)=>{
+    next(new ExpressError(404, "page not found!"));
 });
 
-
-//new route
-
-app.get("/listings/new",(req,res)=>{
-    res.render("listings/new.ejs")
+app.use((err,req,res,next)=>{
+    let {status=500,message="something went wrong!"} = err;
+    res.render("listings/error.ejs" ,{message});
+    // res.status(status).send(message);
 });
 
-//showing details
-
-app.get("/listings/:id",async (req,res)=>{
-    let { id } = req.params;
-    const Listing = await listing.findById(id);
-    res.render("listings/show.ejs",{Listing});
+app.listen("8080",()=>{
+    console.log("app is listening to port : 8080");
 });
 
-//create route
- app.post("/listings",async (req,res)=>{
-    const newListing =new listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/listings");
- });
-
-
- // edit
-app.get("/listings/:id/edit",async (req,res)=>{
-    let { id } = req.params;
-    const Listing = await listing.findById(id);
-    res.render("listings/edit.ejs",{Listing});
-});
-
-//update
-app.put("/listings/:id",async (req,res)=>{
-    let { id } = req.params;
-    await listing.findByIdAndUpdate(id,{...req.body.listing});
-    res.redirect("/listings");
-});
-
-//delete
-app.delete("/listings/:id",async (req,res)=>{
-    let { id } = req.params;
-    await listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-})
