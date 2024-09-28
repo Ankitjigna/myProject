@@ -54,7 +54,7 @@ const validateSchema = (req,res,next)=>{
     let {error} = reviewSchema.validate(req.body);
     if(error){
         let errMsg = error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(400,errMsg);
+        throw new ExpressError(400 ,errMsg);
     }else{
         next();
     }
@@ -77,7 +77,7 @@ app.get("/listings/new",(req,res)=>{
 
 app.get("/listings/:id",wrapAsync(async (req,res,next)=>{
     let { id } = req.params;
-    const Listing = await listing.findById(id);
+    const Listing = await listing.findById(id).populate("reviews");
     res.render("listings/show.ejs",{Listing});
 }));
 
