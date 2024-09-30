@@ -1,14 +1,11 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require('method-override');
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const {listingSchema ,reviewSchema} = require("./schema.js");
-const Review = require("./models/review.js");
+const session = require("express-session");
 
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js");
@@ -34,11 +31,23 @@ main()
     console.log(err);
 });
 
+const sessionOptions = {
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
+    Cookie: {
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 4,
+        maxAge:  1000 * 60 * 60 * 24 * 4,
+        httpOnly: true,
+    },
+};
+
+app.use(session(sessionOptions));
+
 
 app.get("/",(req,res)=>{
     res.send("home");
-})
-
+});
 
 app.use("/listings", listings);
 app.use("/listings/:id/reviews", reviews);
