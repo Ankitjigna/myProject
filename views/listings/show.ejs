@@ -2,18 +2,16 @@
 <body>
   <div class="row">
     <div class="col-8 offset-3">
-  <h3>All details :</h3>
+  <h3><%= Listing.title %></h3>
 </div>
     <div class="card col-6 offset-3 show-card listing-card">
       <img src="<%= Listing.image %>" class="card-img-top show-img " alt="listing_image">
       <div class="card-body">
-        <p class="card-text">
-          <b><%= Listing.title %></b><br>
-          <%= Listing.description %><br>
-          <%= Listing.price %><br>
-          <%= Listing.location %><br>
-          <%= Listing.country %>
-        </p>
+          <p class="card-text">owned by: <i><%= Listing.owner.username %></i></p>
+          <p class="card-text"> <%= Listing.description %></p>
+          <p class="card-text"> <%= Listing.price %></p>
+          <p class="card-text"><%= Listing.location %></p>
+          <p class="card-text"> <%= Listing.country %></p>
       </div>
     </div>
   <br />

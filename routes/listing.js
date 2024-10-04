@@ -37,11 +37,12 @@ router.get("/new", isLoggedIn ,(req,res)=>{
 
 router.get("/:id",wrapAsync(async (req,res,next)=>{
     let { id } = req.params;
-    const Listing = await listing.findById(id).populate("reviews");
+    const Listing = await listing.findById(id).populate("reviews").populate("owner");
     if(!Listing){
         req.flash("error","does not exist");
         res.redirect("/listings");
     }
+    console.log(Listing);
     res.render("listings/show.ejs",{Listing});
 }));
 
@@ -51,6 +52,7 @@ router.post("/", validateListing ,isLoggedIn,wrapAsync(async (req,res,next)=>{
     //     throw new ExpressError(400, "send valid data for listing");
     // }
     const newListing =new listing(req.body.listing);
+    newListing.owner = req.user._id;
     await newListing.save();
     req.flash("success" ,"New listing Created!");
     res.redirect("/listings");
