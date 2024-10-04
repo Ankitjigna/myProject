@@ -15,7 +15,7 @@ router.post(
     try {
       let { username, email, password } = req.body;
       const newUser = new User({ username, email });
-      let registeredUser = await User.register(newUser, "abc@1234");
+      let registeredUser = await User.register(newUser, password);
       console.log(registeredUser);
       req.login(registeredUser, (err) => {
         if (err) {
@@ -37,7 +37,7 @@ router.get("/login", (req, res) => {
 
 router.post(
   "/login",
-  saveRedirectUrl,
+  // saveRedirectUrl,
   passport.authenticate("local", {
     failureRedirect: "/login",
     failureFlash: true,
@@ -45,7 +45,7 @@ router.post(
   async (req, res) => {
     // res.send("welcome, u are logged in!");
     req.flash("success", "welcome back to the world!");
-    req.redirect(req.locals.redirectUrl);
+    res.redirect("/listings");
   }
 );
 
