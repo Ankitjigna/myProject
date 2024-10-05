@@ -6,20 +6,9 @@ const Review = require("../models/review.js");
 const {listingSchema ,reviewSchema} = require("../schema.js");
 const listing = require("../models/listing.js");
 const {isLoggedIn} = require("../middleware.js");
-
-const validateSchema = (req,res,next)=>{
-    let {error} = reviewSchema.validate(req.body);
-    if(error){
-        let errMsg = error.details.map((el)=>el.message).join(",");
-        throw new ExpressError(400 ,errMsg);
-    }else{
-        next();
-    }
-};
-
-
+const { validateReview } = require("../middleware.js");
 // review ---post 
-router.post("/",isLoggedIn,validateSchema, wrapAsync(async(req,res)=>{
+router.post("/",isLoggedIn,validateReview, wrapAsync(async(req,res)=>{
     let Listing = await listing.findById(req.params.id);
     let newReview = new Review(req.body.review);
 
