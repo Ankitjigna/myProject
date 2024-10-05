@@ -1,12 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const ExpressError = require("../utils/ExpressError.js");
-const { listingSchema, reviewSchema } = require("../schema.js");
 const listing = require("../models/listing.js");
-const { isLoggedIn, isOwner,validateListing ,validateReview} = require("../middleware.js");
-
-
+const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 //showing title
 
@@ -32,7 +28,12 @@ router.get(
     let { id } = req.params;
     const Listing = await listing
       .findById(id)
-      .populate("reviews")
+      .populate({
+        path: "reviews",
+        populate: {
+          path: "author",
+        },
+      })
       .populate("owner");
     if (!Listing) {
       req.flash("error", "does not exist");
