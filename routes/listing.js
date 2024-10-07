@@ -5,31 +5,41 @@ const listing = require("../models/listing.js");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware.js");
 
 const listingContoller = require ("../controllers/listing.js");
+const multer  = require('multer');
+const { storage } = require("../cloudConfig.js");
+const upload = multer({storage});
 
-//showing title
-
-router.get(
-  "/",
+router.route( "/")
+.get(
   wrapAsync(listingContoller.index
-));
-
-//new route
-
-router.get("/new", isLoggedIn, listingContoller.renderNewForm);
-
-//showing details
-
-router.get(
-  "/:id",
-  wrapAsync(listingContoller.showListings)
+))
+.post(
+  isLoggedIn,
+  
+  upload.single('listing[image]'),
+  validateListing,
+  wrapAsync(listingContoller.createListing)
 );
 
-//create route
-router.post(
-  "/",
-  validateListing,
+
+//new route
+router.get("/new", isLoggedIn, listingContoller.renderNewForm);
+
+router.route("/:id")
+.get(
+  wrapAsync(listingContoller.showListings)
+)
+.put(
   isLoggedIn,
-  wrapAsync(listingContoller.createListing)
+  isOwner,
+  upload.single('listing[image]'),
+  validateListing,
+  wrapAsync(listingContoller.updateListing)
+)
+.delete(
+  isLoggedIn,
+  isOwner,
+  wrapAsync(listingContoller.destroyListing)
 );
 
 // edit
@@ -38,23 +48,6 @@ router.get(
   isLoggedIn,
   isOwner,
   wrapAsync(listingContoller.renderEditForm)
-);
-
-//update
-router.put(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  validateListing,
-  wrapAsync(listingContoller.updateListing)
-);
-
-//delete
-router.delete(
-  "/:id",
-  isLoggedIn,
-  isOwner,
-  wrapAsync(listingContoller.destroyListing)
 );
 
 module.exports = router;
