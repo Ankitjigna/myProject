@@ -4,6 +4,7 @@
     #filters {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
     }
     .filter {
       text-align: center;
@@ -18,6 +19,19 @@
     .filter p {
       font-size: 0.8rem;
     }
+    .tax-info{
+      display: none;
+    }
+    .tax-toggle{
+      border: 1px solid black;
+      border-radius: 1rem;
+      height: 3.5rem;
+      padding: 1rem;
+      margin-left: 3rem;
+      display: flex;
+      align-items: center;
+    }
+
   </style>
 
   <div id="filters">
@@ -58,16 +72,16 @@
       <p>Arctic</p>
     </div>
     <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
+      <div><i class="fa-solid fa-umbrella-beach"></i></div>
+      <p>Beach</p>
     </div>
     <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
+      <div><i class="fa-solid fa-sailboat"></i></div>
+      <p>Boat</p>
     </div>
     <div class="filter">
-      <div><i class="fa-solid fa-fire"></i></div>
-      <p>Trending</p>
+      <div><i class="fa-solid fa-igloo"></i></div>
+      <p>Domes</p>
     </div>
 
     <div class="tax-toggle">
@@ -79,7 +93,7 @@
           id="flexSwitchCheckDefault"
         />
         <label class="form-check-label" for="flexSwitchCheckDefault"
-          >Default switch checkbox input</label
+          >Display total after taxes</label
         >
       </div>
     </div>
@@ -106,7 +120,7 @@
           <p class="card-text">
             <b> <%= listing.title %></b> <br />
           <%= listing.price %> / night
-            &nbsp; <i>  +18% GST</i>
+            &nbsp; <i class="tax-info">  +18% GST</i>
           </p>
         </div>
       </div>
@@ -119,6 +133,13 @@
 <script>
   let taxSwitch = document.getElementById("flexSwitchCheckDefault");
   taxSwitch.addEventListener("click",()=>{
-    console.log("done");
+    let taxInfo = document.getElementsByClassName("tax-info");
+    for(info of taxInfo){
+      if (info.style.display != "inline"){
+        info.style.display = "inline";
+      } else{
+        info.style.display ="none";
+      };
+    };
   });
 </script>
