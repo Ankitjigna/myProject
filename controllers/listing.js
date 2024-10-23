@@ -73,3 +73,6 @@ module.exports.destroyListing = async (req, res, next) => {
   req.flash("success", " listing deleted!");
   res.redirect("/listings");
 };
+
+
+
