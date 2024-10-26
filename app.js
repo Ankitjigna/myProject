@@ -31,8 +31,12 @@ app.use(express.static(path.join(__dirname,"/public")));
 
 // mongoose
 
+// const MONGO_URL ="mongodb://127.0.0.1:27017/duniya";
+
+const dburl = process.env.ATLASDB_URL;
+
 async function main(){
-    await mongoose.connect('mongodb://127.0.0.1:27017/duniya');
+    await mongoose.connect(dburl);
 }
 main()
 .then((res)=>{
